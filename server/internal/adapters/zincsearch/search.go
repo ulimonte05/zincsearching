@@ -3,6 +3,7 @@ package zincsearch
 import (
 	"fmt"
 	"net/http"
+	"time"
 	"zincsearching/internal/domain"
 )
 
@@ -11,6 +12,8 @@ func (c *Client) Search(indexName string, body SearchDocumentsRequest) ([]domain
 	apiError := &ErrorReponse{}
 
 	path := fmt.Sprintf("/api/%s/_search", indexName)
+
+	body = c.BuildBody(body)
 
 	req, err := c.adapter.BuildRequest(http.MethodPost, path, body)
 	if err != nil {
@@ -47,3 +50,26 @@ func MapHitsToEmails(hits []Hit, indexName string) []domain.Email {
 	return emails
 }
 
+func (c *Client) BuildBody( body SearchDocumentsRequest) SearchDocumentsRequest {
+	now := time.Now()
+
+	if body.Query.StartTime == "" {
+		body.Query.StartTime = now.AddDate(0, 0, -7).Format("2006-01-02T15:04:05Z07:00")
+	}
+
+	if body.Query.EndTime == "" {
+		body.Query.EndTime = now.Format("2006-01-02T15:04:05Z07:00")
+	}
+
+	if body.SearchType == "" {
+		body.SearchType = "matchphrase"
+	}
+	if len(body.SortFields) == 0 {
+		body.SortFields = []string{"-@timestamp"}
+	}
+	if body.MaxResults == 0 {
+		body.MaxResults = 5
+	}
+
+	return body
+}

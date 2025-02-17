@@ -32,12 +32,15 @@ func NewClient(c *http.Client) *Client {
 }
 
 func setBasicHeaders(a *adapters.Adapter) {
-	username := os.Getenv("ZINC_FIRST_ADMIN_USER")
-	password := os.Getenv("ZINC_FIRST_ADMIN_PASSWORD")
+	var username = "admin" 
+	var password = "Complexpass#123"
 
-	if username == "" || password == "" {
-		panic("ZINC_FIRST_ADMIN_USER and ZINC_FIRST_ADMIN_PASSWORD must be set")
-	}
+	if os.Getenv("env") != "" {
+		user := os.Getenv("ZINCSEARCH_USERNAME") 
+		pass := os.Getenv("ZINCSEARCH_PASSWORD") 
+		username = user
+		password = pass
+	} 
 
 	a.SetBasicAuth(username, password)
 }
