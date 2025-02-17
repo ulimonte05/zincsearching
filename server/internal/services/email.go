@@ -1,8 +1,9 @@
-package services 
+package services
 
 import (
-	"server/internal/domain"
-	"server/internal/ports"
+	"zincsearching/internal/adapters/zincsearch"
+	"zincsearching/internal/domain"
+	"zincsearching/internal/ports"
 )
 
 type EmailService struct {
@@ -13,6 +14,6 @@ func NewEmailService(repo ports.EmailRepository) *EmailService {
 	return &EmailService{repo: repo}
 }
 
-func (s *EmailService) Search(indexName string, body interface{}) ([]domain.Email, error) {
+func (s *EmailService) Search(indexName string, body zincsearch.SearchDocumentsRequest) ([]domain.Email, error) {
 	return s.repo.Search(indexName, body)
 }

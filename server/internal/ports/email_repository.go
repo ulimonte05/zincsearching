@@ -1,9 +1,10 @@
 package ports
 
 import (
-	"server/internal/domain"
+	"zincsearching/internal/domain"
+	"zincsearching/internal/adapters/zincsearch"
 )
 
 type EmailRepository interface {
-	Search(indexName string, body interface{}) ([]domain.Email, error)
+	Search(indexName string, body zincsearch.SearchDocumentsRequest) ([]domain.Email, error)
 }
