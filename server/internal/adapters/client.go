@@ -1,10 +1,8 @@
-package zincsearch
+package adapters
 
 import (
 	"net/http"
 	"os"
-
-	"zincsearching/internal/adapters"
 )
 
 const (
@@ -13,7 +11,7 @@ const (
 
 // Client es el cliente para interactuar con la API de ZincSearch.
 type Client struct {
-	adapter *adapters.Adapter
+	adapter *Adapter
 }
 
 // NewClient inicializa el cliente de ZincSearch.
@@ -23,7 +21,7 @@ func NewClient(c *http.Client) *Client {
 		host = defaultZincSearchHost
 	}
 
-	a := adapters.NewAdapter(c, host)
+	a := NewAdapter(c, host)
 	setBasicHeaders(a)
 
 	return &Client{
@@ -31,7 +29,7 @@ func NewClient(c *http.Client) *Client {
 	}
 }
 
-func setBasicHeaders(a *adapters.Adapter) {
+func setBasicHeaders(a *Adapter) {
 	var username = "admin" 
 	var password = "Complexpass#123"
 

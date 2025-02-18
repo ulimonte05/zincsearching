@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService) {
+func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, ix *services.IndexerService) {
 	
 	r.Post("/{index}/search", func(w http.ResponseWriter, r *http.Request) {
 		index := chi.URLParam(r, "index")
@@ -47,7 +47,7 @@ func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService) {
 
 		// Procesar el archivo utilizando el servicio de indexación.
 		ctx := r.Context()
-		if err := es.Index(ctx, index, file); err != nil {
+		if err := ix.Index(ctx, index, file); err != nil {
 			http.Error(w, "Error al procesar el archivo: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
