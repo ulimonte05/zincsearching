@@ -1,4 +1,4 @@
-package zincsearch
+package domain
 
 // REQUESTS
 

@@ -7,9 +7,9 @@ import (
 	"zincsearching/internal/domain"
 )
 
-func (c *Client) Search(indexName string, body SearchDocumentsRequest) ([]domain.Email, error) {
-	response := &SearchDocumentsResponse{}
-	apiError := &ErrorReponse{}
+func (c *Client) Search(indexName string, body domain.SearchDocumentsRequest) ([]domain.Email, error) {
+	response := &domain.SearchDocumentsResponse{}
+	apiError := &domain.ErrorReponse{}
 
 	path := fmt.Sprintf("/api/%s/_search", indexName)
 
@@ -34,7 +34,7 @@ func (c *Client) Search(indexName string, body SearchDocumentsRequest) ([]domain
 	return emails, nil
 }
 
-func MapHitsToEmails(hits []Hit, indexName string) []domain.Email {
+func MapHitsToEmails(hits []domain.Hit, indexName string) []domain.Email {
 	var emails []domain.Email
 	for _, hit := range hits {
 		email := domain.Email{
@@ -50,7 +50,7 @@ func MapHitsToEmails(hits []Hit, indexName string) []domain.Email {
 	return emails
 }
 
-func (c *Client) BuildBody( body SearchDocumentsRequest) SearchDocumentsRequest {
+func (c *Client) BuildBody( body domain.SearchDocumentsRequest) domain.SearchDocumentsRequest {
 	now := time.Now()
 
 	if body.Query.StartTime == "" {

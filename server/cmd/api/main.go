@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+
 	r := chi.NewRouter()
 	es := services.NewEmailService(zincsearch.NewClient(http.DefaultClient))
 
