@@ -44,7 +44,12 @@ func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, is *serv
 			return
 		}
 
-		is.Index(index, records)
+		_, err2 := is.Index(index, records)
+
+		if err2 != nil { // Verifica si err es diferente de nil
+			http.Error(w, "Error al procesar el archivo: "+err2.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Archivo procesado exitosamente"))

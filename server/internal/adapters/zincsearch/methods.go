@@ -74,7 +74,7 @@ func (c *Client) BuildBody( body domain.SearchDocumentsRequest) domain.SearchDoc
 	return body
 }
 
-func (c *Client) Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error) {
+func (c *Client) Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error) {
 	response := &domain.CreateDocumentsResponse{}
 	apiError := &domain.ErrorReponse{}
 

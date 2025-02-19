@@ -1,8 +1,6 @@
 package ports
 
 import (
-	"context"
-	"mime/multipart"
 	"zincsearching/internal/domain"
 )
 
@@ -11,5 +9,5 @@ type EmailRepository interface {
 }
 
 type IndexerRepository interface {
-	Index(ctx context.Context, indexName string, file multipart.File) (domain.CreateDocumentsResponse, error)
+	Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error)
 }

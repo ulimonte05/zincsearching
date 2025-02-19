@@ -92,3 +92,4 @@ func (a *Adapter) Do(req *http.Request, successV interface{}, errorV interface{}
 
 	return resp, nil
 }
+

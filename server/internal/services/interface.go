@@ -5,6 +5,6 @@ import (
 )
 
 type ZincSearchAdapter interface {
-	Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error)
-	Search(indexName string, body domain.SearchDocumentsRequest) (*domain.SearchDocumentsResponse, error)
+	Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error)
+	Search(indexName string, body domain.SearchDocumentsRequest) ([]domain.Email, error)
 }

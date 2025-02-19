@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 	"zincsearching/internal/domain"
 	"zincsearching/internal/ports"
 )
@@ -14,11 +13,7 @@ func NewIndexerService(repo ports.IndexerRepository) *IndexerService {
 	return &IndexerService{repo: repo}
 }
 
-// IndexEmails indexes emails with the ZincSearch API
-func (is *IndexerService) Index(indexName string, records []domain.Email) error {
-	res := is.Index(indexName, records)
-
-	log.Printf("Indexed %d documents\n", res.NumIndexed)
-
-	return nil
+// Index recibe un archivo y lo envía al repositorio
+func (is *IndexerService) Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error) {
+	return is.repo.Index(indexName, records)
 }

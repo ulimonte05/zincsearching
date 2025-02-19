@@ -12,15 +12,17 @@ import (
 )
 
 func main() {
-
 	r := chi.NewRouter()
 
-	es := services.NewEmailService(zincsearch.NewClient(http.DefaultClient))
+	// Crear el cliente de ZincSearch
+	client := zincsearch.NewClient(http.DefaultClient)
 
-	// encajar tipos
-	is := services.NewIndexerService()
+	// Crear servicios usando el cliente como repositorio
+	emailService := services.NewEmailService(client)
+	indexerService := services.NewIndexerService(client)
 
-	routes.InitializeDocumentsRoutes(r, es, is)
+	// Inicializar rutas con los servicios correctos
+	routes.InitializeDocumentsRoutes(r, emailService, indexerService)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
