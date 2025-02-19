@@ -17,8 +17,8 @@ func main() {
 
 	es := services.NewEmailService(zincsearch.NewClient(http.DefaultClient))
 
-	es := services.NewEmailService(c)
-	ix := services.NewIndexerService(c)
+	// encajar tipos
+	is := services.NewIndexerService()
 
 	routes.InitializeDocumentsRoutes(r, es, is)
 
