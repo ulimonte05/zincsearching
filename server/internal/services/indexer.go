@@ -1,8 +1,8 @@
 package services
 
 import (
-	"context"
-	"mime/multipart"
+	"log"
+	"zincsearching/internal/domain"
 	"zincsearching/internal/ports"
 )
 
@@ -14,6 +14,11 @@ func NewIndexerService(repo ports.IndexerRepository) *IndexerService {
 	return &IndexerService{repo: repo}
 }
 
-func (s *IndexerService) Index(ctx context.Context, indexName string, file multipart.File) error {
-	return s.repo.Index(ctx, indexName, file)
+// IndexEmails indexes emails with the ZincSearch API
+func (is *IndexerService) Index(indexName string, records []domain.Email) error {
+	res := is.Index(indexName, records)
+
+	log.Printf("Indexed %d documents\n", res.NumIndexed)
+
+	return nil
 }

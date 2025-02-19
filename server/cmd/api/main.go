@@ -15,14 +15,12 @@ func main() {
 
 	r := chi.NewRouter()
 
-	// instancio zincsearch client
-	c := zincsearch.NewClient(http.DefaultClient)
+	es := services.NewEmailService(zincsearch.NewClient(http.DefaultClient))
 
 	es := services.NewEmailService(c)
 	ix := services.NewIndexerService(c)
 
-	// instancia rutas de documents
-	routes.InitializeDocumentsRoutes(r, es, ix)
+	routes.InitializeDocumentsRoutes(r, es, is)
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

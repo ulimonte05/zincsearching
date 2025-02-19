@@ -73,3 +73,30 @@ func (c *Client) BuildBody( body domain.SearchDocumentsRequest) domain.SearchDoc
 
 	return body
 }
+
+func (c *Client) Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error) {
+	response := &domain.CreateDocumentsResponse{}
+	apiError := &domain.ErrorReponse{}
+
+	path := "/api/_bulkv2"
+	body := domain.CreateDocumentsRequest{
+		Index:   indexName,
+		Records: records,
+	}
+
+	req, err := c.adapter.BuildRequest(http.MethodPost, path, body)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.adapter.Do(req, response, apiError)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error creating documents: %s", apiError.ErrorMessage)
+	}
+
+	return response, nil
+}

@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, ix *services.IndexerService) {
+func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, is *services.IndexerService) {
 	
 	r.Post("/{index}/search", func(w http.ResponseWriter, r *http.Request) {
 		index := chi.URLParam(r, "index")
@@ -37,20 +37,14 @@ func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, ix *serv
 	r.Post("/{index}/index", func(w http.ResponseWriter, r *http.Request) {
 		index := chi.URLParam(r, "index")
 
-		// Obtener el archivo del formulario.
-		file, _, err := r.FormFile("file")
-		if err != nil {
-			http.Error(w, "Error al obtener el archivo: "+err.Error(), http.StatusBadRequest)
+		// Obtener records
+		var records []domain.Email
+		if err := json.NewDecoder(r.Body).Decode(&records); err != nil {
+			http.Error(w, "Error al decodificar la solicitud: "+err.Error(), http.StatusBadRequest)
 			return
 		}
-		defer file.Close()
 
-		// Procesar el archivo utilizando el servicio de indexación.
-		ctx := r.Context()
-		if err := ix.Index(ctx, index, file); err != nil {
-			http.Error(w, "Error al procesar el archivo: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
+		is.Index(index, records)
 
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Archivo procesado exitosamente"))
