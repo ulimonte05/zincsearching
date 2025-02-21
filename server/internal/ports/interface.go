@@ -9,5 +9,5 @@ type EmailRepository interface {
 }
 
 type IndexerRepository interface {
-	Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error)
+	Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error)
 }

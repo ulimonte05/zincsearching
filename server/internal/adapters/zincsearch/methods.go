@@ -3,7 +3,6 @@ package zincsearch
 import (
 	"fmt"
 	"net/http"
-	"time"
 	"zincsearching/internal/domain"
 )
 
@@ -12,8 +11,6 @@ func (c *Client) Search(indexName string, body domain.SearchDocumentsRequest) ([
 	apiError := &domain.ErrorReponse{}
 
 	path := fmt.Sprintf("/api/%s/_search", indexName)
-
-	body = c.BuildBody(body)
 
 	req, err := c.adapter.BuildRequest(http.MethodPost, path, body)
 	if err != nil {
@@ -35,50 +32,58 @@ func (c *Client) Search(indexName string, body domain.SearchDocumentsRequest) ([
 }
 
 func MapHitsToEmails(hits []domain.Hit, indexName string) []domain.Email {
-	var emails []domain.Email
-	for _, hit := range hits {
-		email := domain.Email{
-			Id:        hit.ID,
-			Index:     indexName,
-			Score:     int(hit.Score),
-			Timestamp: hit.Timestamp,
-			Content:   hit.Source["content"].(string),
-			File:      hit.Source["file"].(string),
-		}
-		emails = append(emails, email)
-	}
-	return emails
+    var emails []domain.Email
+    for _, hit := range hits {
+        var content, file string
+
+        if c, ok := hit.Source["content"].(string); ok {
+            content = c
+        } else {
+            content = "content not supported" 
+        }
+        
+        if f, ok := hit.Source["file"].(string); ok {
+            file = f
+        } else {
+            file = "content not supported" 
+        }
+
+        email := domain.Email{
+            Id:        hit.ID,
+            Index:     indexName,
+            Score:     int(hit.Score),
+            Timestamp: hit.Timestamp,
+            Content:   content,
+            File:      file,
+        }
+        emails = append(emails, email)
+    }
+    return emails
 }
 
-func (c *Client) BuildBody( body domain.SearchDocumentsRequest) domain.SearchDocumentsRequest {
-	now := time.Now()
 
-	if body.Query.StartTime == "" {
-		body.Query.StartTime = now.AddDate(0, 0, -7).Format("2006-01-02T15:04:05Z07:00")
-	}
-
-	if body.Query.EndTime == "" {
-		body.Query.EndTime = now.Format("2006-01-02T15:04:05Z07:00")
-	}
-
-	if body.SearchType == "" {
-		body.SearchType = "matchphrase"
-	}
-	if len(body.SortFields) == 0 {
-		body.SortFields = []string{"-@timestamp"}
-	}
-	if body.MaxResults == 0 {
-		body.MaxResults = 5
-	}
-
-	return body
-}
-
-func (c *Client) Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error) {
+func (c *Client) Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error) {
 	response := &domain.CreateDocumentsResponse{}
 	apiError := &domain.ErrorReponse{}
 
 	path := "/api/_bulkv2"
+
+	// // Reformatear los registros para que se ajusten a la estructura esperada por Zincsearch
+	// var formattedRecords []map[string]interface{}
+	// for _, record := range records {
+	// 	doc := map[string]interface{}{
+	// 		"_id":        record.Id,
+	// 		"_index":     record.Index,
+	// 		"_score":     record.Score,
+	// 		"@timestamp": record.Timestamp,
+	// 		"_source": map[string]interface{}{
+	// 			"content": record.Content,
+	// 			"file":    record.File,
+	// 		},
+	// 	}
+	// 	formattedRecords = append(formattedRecords, doc)
+	// }
+
 	body := domain.CreateDocumentsRequest{
 		Index:   indexName,
 		Records: records,
@@ -89,10 +94,14 @@ func (c *Client) Index(indexName string, records []domain.Email) (*domain.Create
 		return nil, err
 	}
 
+	fmt.Println(req)
+
 	res, err := c.adapter.Do(req, response, apiError)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(res)
 
 	if res.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error creating documents: %s", apiError.ErrorMessage)

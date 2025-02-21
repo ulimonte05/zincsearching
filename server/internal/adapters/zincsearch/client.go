@@ -32,7 +32,7 @@ func NewClient(c *http.Client) *Client {
 
 func setBasicHeaders(a *adapters.Adapter) {
 	var username = "admin" 
-	var password = "Complexpass#123"
+	var password = "admin"
 
 	if os.Getenv("env") != "" {
 		user := os.Getenv("ZINCSEARCH_USERNAME") 

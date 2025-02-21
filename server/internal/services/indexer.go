@@ -14,6 +14,6 @@ func NewIndexerService(repo ports.IndexerRepository) *IndexerService {
 }
 
 // Index recibe un archivo y lo envía al repositorio
-func (is *IndexerService) Index(indexName string, records []domain.Email) (*domain.CreateDocumentsResponse, error) {
+func (is *IndexerService) Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error) {
 	return is.repo.Index(indexName, records)
 }
