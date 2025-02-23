@@ -1,11 +1,44 @@
-# zincsearching
- Application to search through email data with Zincsearch, Go and Vue Interface
+# 🔍 ZincSearching
 
-# First, ensure to have installed docker in your pc.
+**Aplicación para buscar en datos de correos electrónicos usando ZincSearch, Go y Vue.js**
 
-# Second, run the next command
-- docker-compose up --build (three container will be deployed: zincsearch 4080, server 8080, client 5173)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://www.docker.com)
 
-# Third, ready to play! deploy include example data from email database.
+![Demo](https://via.placeholder.com/800x400.png?text=ZincSearching+Interface+Preview) <!-- Agrega una imagen real aquí -->
 
+Una solución moderna para indexar y buscar en grandes volúmenes de correos electrónicos, con:
+- **Backend en Go** para procesamiento eficiente
+- **Interfaz en Vue.js** intuitiva y responsiva
+- **ZincSearch** como motor de búsqueda full-text
 
+## 🚀 Comenzando
+
+### Prerrequisitos
+- [Docker](https://www.docker.com/get-started) instalado
+- 4 GB de RAM disponibles
+- Puertos 4080, 8080 y 5173 libres
+
+### Instalación
+1. Clona el repositorio:
+```bash
+git clone https://github.com/ulimonte05/zincsearching.git
+cd zincsearching
+
+### Inicia los contenedores:
+2. docker-compose up --build
+
+🌍 Servicios desplegados
+Servicio	Puerto	Descripción
+ZincSearch	4080	Motor de búsqueda
+API Go	8080	Backend REST
+Client Vue.js	5173	Interfaz web
+
+🧠 Datos de ejemplo incluidos
+El sistema viene preconfigurado con:
+
+10,000+ correos de ejemplo (dataset Enron 2011)
+
+Índices pregenerados para búsquedas inmediatas
+
+Usuario demo: admin@demo.com / zincsearching
