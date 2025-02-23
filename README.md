@@ -20,25 +20,27 @@ Una solución moderna para indexar y buscar en grandes volúmenes de correos ele
 - Puertos 4080, 8080 y 5173 libres
 
 ### Instalación
-1. Clona el repositorio:
 ```bash
+1. Clona el repositorio:
 git clone https://github.com/ulimonte05/zincsearching.git
 cd zincsearching
 
-### Inicia los contenedores:
-2. docker-compose up --build
+2. Inicia los contenedores:
+docker-compose up --build
 
-🌍 Servicios desplegados
+```bash
+
+### 🌍 Servicios desplegados
 Servicio	Puerto	Descripción
 ZincSearch	4080	Motor de búsqueda
 API Go	8080	Backend REST
 Client Vue.js	5173	Interfaz web
 
-🧠 Datos de ejemplo incluidos
+### 🧠 Datos de ejemplo incluidos
 El sistema viene preconfigurado con:
-
 10,000+ correos de ejemplo (dataset Enron 2011)
 
 Índices pregenerados para búsquedas inmediatas
 
-Usuario demo: admin@demo.com / zincsearching
+user: admin
+pass:admin
