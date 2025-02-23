@@ -5,7 +5,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://www.docker.com)
 
-![Demo](https://via.placeholder.com/800x400.png?text=ZincSearching+Interface+Preview) <!-- Agrega una imagen real aquí -->
 
 Una solución moderna para indexar y buscar en grandes volúmenes de correos electrónicos, con:
 - **Backend en Go** para procesamiento eficiente
@@ -28,7 +27,6 @@ cd zincsearching
 2. Inicia los contenedores:
 docker-compose up --build
 
-```bash
 
 ### 🌍 Servicios desplegados
 Servicio	Puerto	Descripción
@@ -43,4 +41,4 @@ El sistema viene preconfigurado con:
 Índices pregenerados para búsquedas inmediatas
 
 user: admin
-pass:admin
+pass: admin
