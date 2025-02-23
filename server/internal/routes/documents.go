@@ -2,9 +2,9 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
-	"fmt"
 
 	"zincsearching/internal/domain"
 	"zincsearching/internal/services"
@@ -13,7 +13,7 @@ import (
 )
 
 func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, is *services.IndexerService) {
-	
+
 	r.Post("/{index}/search", func(w http.ResponseWriter, r *http.Request) {
 		index := chi.URLParam(r, "index")
 
@@ -43,7 +43,7 @@ func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, is *serv
 			From:       0,
 			MaxResults: defaultEmailMaxResults,
 		}
-		
+
 		emails, err := es.Search(index, body)
 		if err != nil {
 			http.Error(w, "Search error: "+err.Error(), http.StatusInternalServerError)
@@ -71,12 +71,17 @@ func InitializeDocumentsRoutes(r chi.Router, es *services.EmailService, is *serv
 
 		_, err2 := is.Index(index, records)
 
-		if err2 != nil { 
+		if err2 != nil {
 			http.Error(w, "Error al procesar el archivo: "+err2.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Archivo procesado exitosamente"))
+	})
+
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
 	})
 }

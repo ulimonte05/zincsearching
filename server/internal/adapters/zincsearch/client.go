@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultZincSearchHost = "http://localhost:4080"
+	defaultZincSearchHost = "http://zincsearch:4080"
 )
 
 // Client es el cliente para interactuar con la API de ZincSearch.
@@ -31,16 +31,15 @@ func NewClient(c *http.Client) *Client {
 }
 
 func setBasicHeaders(a *adapters.Adapter) {
-	var username = "admin" 
+	var username = "admin"
 	var password = "admin"
 
 	if os.Getenv("env") != "" {
-		user := os.Getenv("ZINCSEARCH_USERNAME") 
-		pass := os.Getenv("ZINCSEARCH_PASSWORD") 
+		user := os.Getenv("ZINCSEARCH_USERNAME")
+		pass := os.Getenv("ZINCSEARCH_PASSWORD")
 		username = user
 		password = pass
-	} 
+	}
 
 	a.SetBasicAuth(username, password)
 }
-

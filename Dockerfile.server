@@ -1,0 +1,23 @@
+# Dockerfile.server
+FROM golang:1.18-alpine AS builder
+
+WORKDIR /app
+
+# Copiamos solo el archivo go.mod si go.sum no existe
+COPY go.mod ./
+RUN go mod download
+
+# Copiamos el resto del código fuente
+COPY . .
+
+# Cambiamos al directorio donde se encuentra el main.go
+WORKDIR /app/server/cmd/api
+
+# Compilamos la API
+RUN go build -o server .
+
+FROM alpine:3.14
+WORKDIR /app
+COPY --from=builder /app/server/cmd/api/server .
+EXPOSE 8080
+CMD ["./server"]

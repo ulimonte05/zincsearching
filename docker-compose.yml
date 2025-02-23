@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: server
+    ports:
+      - "8080:8080"
+    environment:
+      - ZINCSEARCH_URL=http://zincsearch:4080
+    depends_on:
+      - zincsearch
+    networks:
+      - zincsearching_network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.client
+    container_name: client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
+  zincsearch:
+    image: public.ecr.aws/zinclabs/zincsearch:latest
+    container_name: zincsearch
+    ports:
+      - "4080:4080"
+    environment:
+      - ZINC_FIRST_ADMIN_USER=admin
+      - ZINC_FIRST_ADMIN_PASSWORD=admin
+      - ZINC_DATA_PATH=/data
+    volumes:
+      - ./data:/data
+    networks:
+      - zincsearching_network
+
+networks:
+  zincsearching_network:
+    driver: bridge

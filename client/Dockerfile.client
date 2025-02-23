@@ -1,0 +1,20 @@
+# Usa una imagen base ligera de Node.js
+FROM node:18-alpine
+
+# Define el directorio de trabajo en el contenedor
+WORKDIR /app
+
+# Copia todos los archivos necesarios (asegurándote de que no falte package.json)
+COPY package*.json ./
+
+# Instala las dependencias
+RUN npm install
+
+# Copia el resto de los archivos de la aplicación (código fuente)
+COPY . .
+
+# Expón el puerto que usará tu aplicación
+EXPOSE 5173  
+
+# Ejecuta la aplicación en modo desarrollo
+CMD ["npm", "run", "dev", "--", "--host"]
