@@ -2,3 +2,4 @@ server/enron_mail_20110402*
 *.tgz
 .git
 .env
+data/

@@ -30,6 +30,10 @@ func NewClient(c *http.Client) *Client {
 	}
 }
 
+func (c *Client) SetBaseURL(url string) {
+	c.adapter.SetHost(url)
+}
+
 func setBasicHeaders(a *adapters.Adapter) {
 	var username = "admin"
 	var password = "admin"

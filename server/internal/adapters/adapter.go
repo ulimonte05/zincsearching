@@ -30,6 +30,11 @@ func (a *Adapter) SetBasicAuth(username, password string) {
 	a.password = password
 }
 
+// SetHost actualiza la URL base del adaptador
+func (a *Adapter) SetHost(host string) {
+	a.host = host
+}
+
 // BuildRequest construye una petición HTTP con el método, path y body proporcionado.
 // El body se codifica a JSON si no es nil.
 func (a *Adapter) BuildRequest(method, path string, body interface{}) (*http.Request, error) {
@@ -92,4 +97,3 @@ func (a *Adapter) Do(req *http.Request, successV interface{}, errorV interface{}
 
 	return resp, nil
 }
-
