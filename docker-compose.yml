@@ -33,9 +33,9 @@ services:
     environment:
       - ZINC_FIRST_ADMIN_USER=admin
       - ZINC_FIRST_ADMIN_PASSWORD=admin
-      - ZINC_DATA_PATH=/data
     volumes:
       - ./data:/data
+    user: root
     networks:
       - zincsearching_network
 

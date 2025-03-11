@@ -10,4 +10,5 @@ type EmailRepository interface {
 
 type IndexerRepository interface {
 	Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error)
+	IndexEmailsInBulk(dir string) error
 }

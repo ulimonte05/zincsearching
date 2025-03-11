@@ -49,7 +49,7 @@
 
 	type Hit struct {
 		ID        string                 `json:"_id"`
-		Timestamp string                 `json:"@timestamp"`
+		Timestamp string                 `json:"time"`
 		Score     float64                `json:"_score"`
 		Source    map[string]interface{} `json:"_source"`
 	}

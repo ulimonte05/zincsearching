@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/pprof"
-
+	"sync"
 	"zincsearching/internal/adapters/zincsearch"
+	"zincsearching/internal/domain"
 	"zincsearching/internal/routes"
 	"zincsearching/internal/services"
 
@@ -39,6 +41,19 @@ func main() {
 	// Crear servicios usando el cliente como repositorio
 	emailService := services.NewEmailService(client)
 	indexerService := services.NewIndexerService(client)
+
+	// uso workers para indexar los emails
+	numWorkers := 4
+	wg := sync.WaitGroup{}
+	wg.Add(numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			defer wg.Done()
+			indexerService.IndexEmailsInBulk(domain.EmailsRootFolder)
+		}()
+	}
+	wg.Wait()
+	fmt.Println("Emails indexed successfully in bulk")
 
 	// Inicializar rutas con los servicios correctos
 	routes.InitializeDocumentsRoutes(r, emailService, indexerService)

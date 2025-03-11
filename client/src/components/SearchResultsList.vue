@@ -5,7 +5,7 @@
       v-for="email in searchResults" 
       :key="email._id" 
       :emailSubject="email_subject" 
-      :emailSender="email['@timestamp']" 
+      :emailSender="email['time']" 
       :emailDate="email.content" 
       :emailSnippet="email_snippet" 
       :emailId="email._id" 

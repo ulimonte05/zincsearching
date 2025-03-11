@@ -1,23 +1,65 @@
 # Dockerfile.server
+#FROM golang:1.18-alpine AS builder
+
+#WORKDIR /app
+
+# Copiamos solo el archivo go.mod si go.sum no existe
+#COPY go.mod ./
+#RUN go mod download
+
+# Copiamos el resto del código fuente
+#COPY . .
+
+# Cambiamos al directorio donde se encuentra el main.go
+#WORKDIR /app/server/cmd/api
+
+# Compilamos la API
+#RUN go build -o server .
+
+#FROM alpine:3.14
+#WORKDIR /app
+#COPY --from=builder /app/server/cmd/api/server .
+#EXPOSE 8080
+#CMD ["./server"]
+
+# Dockerfile.server
+# ----------------
+# Etapa de construcción (builder)
 FROM golang:1.18-alpine AS builder
 
 WORKDIR /app
 
-# Copiamos solo el archivo go.mod si go.sum no existe
+# Instalar dependencias para descargar/extraer el dataset
+RUN apk add --no-cache curl tar
+
+# Copiar solo los archivos necesarios para descargar dependencias de Go
 COPY go.mod ./
 RUN go mod download
 
-# Copiamos el resto del código fuente
+# Copiar el código fuente (sin el dataset)
 COPY . .
 
-# Cambiamos al directorio donde se encuentra el main.go
-WORKDIR /app/server/cmd/api
+# Descargar y extraer el dataset de Enron DENTRO del contenedor
+WORKDIR /app/server
+RUN sh -c ' \
+  echo "Downloading the data from the source..." && \
+  curl -O http://download.srv.cs.cmu.edu/~enron/enron_mail_20110402.tgz && \
+  echo "Extracting the data..." && \
+  tar -xzf enron_mail_20110402.tgz && \
+  rm enron_mail_20110402.tgz '
 
-# Compilamos la API
+# Compilar la aplicación
+WORKDIR /app/server/cmd/api
 RUN go build -o server .
 
+# ----------------
+# Etapa final (imagen ligera)
 FROM alpine:3.14
 WORKDIR /app
+
+# Copiar el binario y el dataset desde la etapa de construcción
 COPY --from=builder /app/server/cmd/api/server .
+COPY --from=builder /app/server/enron_mail_20110402 ./enron_mail_20110402
+
 EXPOSE 8080
 CMD ["./server"]

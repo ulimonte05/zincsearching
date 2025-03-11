@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"zincsearching/internal/domain"
+	"zincsearching/utils"
 )
 
 func (c *Client) Search(indexName string, body domain.SearchDocumentsRequest) ([]domain.Email, error) {
@@ -32,35 +33,34 @@ func (c *Client) Search(indexName string, body domain.SearchDocumentsRequest) ([
 }
 
 func MapHitsToEmails(hits []domain.Hit, indexName string) []domain.Email {
-    var emails []domain.Email
-    for _, hit := range hits {
-        var content, file string
+	var emails []domain.Email
+	for _, hit := range hits {
+		var content, file string
 
-        if c, ok := hit.Source["content"].(string); ok {
-            content = c
-        } else {
-            content = "content not supported" 
-        }
-        
-        if f, ok := hit.Source["file"].(string); ok {
-            file = f
-        } else {
-            file = "content not supported" 
-        }
+		if c, ok := hit.Source["content"].(string); ok {
+			content = c
+		} else {
+			content = "content not supported"
+		}
 
-        email := domain.Email{
-            Id:        hit.ID,
-            Index:     indexName,
-            Score:     int(hit.Score),
-            Timestamp: hit.Timestamp,
-            Content:   content,
-            File:      file,
-        }
-        emails = append(emails, email)
-    }
-    return emails
+		if f, ok := hit.Source["file"].(string); ok {
+			file = f
+		} else {
+			file = "content not supported"
+		}
+
+		email := domain.Email{
+			Id:        hit.ID,
+			Index:     indexName,
+			Score:     int(hit.Score),
+			Timestamp: hit.Timestamp,
+			Content:   content,
+			File:      file,
+		}
+		emails = append(emails, email)
+	}
+	return emails
 }
-
 
 func (c *Client) Index(indexName string, records interface{}) (*domain.CreateDocumentsResponse, error) {
 	response := &domain.CreateDocumentsResponse{}
@@ -108,4 +108,44 @@ func (c *Client) Index(indexName string, records interface{}) (*domain.CreateDoc
 	}
 
 	return response, nil
+}
+
+func (c *Client) IndexEmailsInBulk(dir string) error {
+
+	files, err := utils.ReadFileFromDir(dir)
+	if err != nil {
+		return fmt.Errorf("an error occurred while reading files  %s: %s", dir, err.Error())
+
+	}
+
+	emailsBulk, err := utils.ProcessEmailInParallel(files, 4)
+	if err != nil {
+		return fmt.Errorf("an error occurred while processing emails: %s", err.Error())
+	}
+
+	if len(emailsBulk) > 0 {
+
+		chunkedEmails := chunkEmails(emailsBulk, 1000)
+
+		for _, chunk := range chunkedEmails {
+			c.Index(domain.EmailIndexName, chunk)
+		}
+
+		fmt.Println("Emails indexed successfully in bulk")
+	} else {
+		fmt.Println("No bulk emails found")
+	}
+	return nil
+}
+
+func chunkEmails(emails []*domain.Email, chunkSize int) [][]*domain.Email {
+	var chunks [][]*domain.Email
+	for i := 0; i < len(emails); i += chunkSize {
+		end := i + chunkSize
+		if end > len(emails) {
+			end = len(emails)
+		}
+		chunks = append(chunks, emails[i:end])
+	}
+	return chunks
 }
